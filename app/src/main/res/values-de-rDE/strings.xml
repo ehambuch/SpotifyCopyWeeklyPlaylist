@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Backup Weekly Playlist</string>
+    <string name="app_description">Backup der wöchentlichen Playlist von Spotify.</string>
+    <string name="action_settings">Einstellungen</string>
+    <string name="button_label">Kopiere Playlist</string>
+    <string name="notification_text">Kopiere heute deine \"Discover Weekly\" Playlist von Spotify</string>
+    <string name="notification_title">Sicherung Spotify Weekly</string>
+    <string name="status_copytracks">Kopiere die Tracks&#8230;</string>
+    <string name="status_createplaylist">Erzeuge neue Playlist&#8230;</string>
+    <string name="status_finish">Fertig - Weekly kopiert.</string>
+    <string name="status_gettracks">Lese Tracks&#8230;</string>
+    <string name="status_searchplaylist">Suche Playlist \"Weekly\"&#8230;</string>
+    <string name="status_start">Hole Benutzerdaten&#8230;</string>
+    <string name="text_error_kein_user">Fehler: Kein Benutzer ermittelbar!</string>
+    <string name="text_error_keine_tracks">Fehler: Keine Tracks in Playlist gefunden!</string>
+    <string name="text_error_keine_weekly_playlist">Fehler: Keine \"Discover Weekly\" gefunden!</string>
+    <string name="text_error_no_copy_tracks">Fehler: Kann Tracks nicht kopieren!</string>
+    <string name="text_error_no_create_playlist">Fehler: Kann neue Playlist nicht anlegen!</string>
+    <string name="action_dataprotection">Datenschutz</string>
+    <string name="text_license" translatable="true"><![CDATA[<p>Written in 2020 by Eric Hambuch</p>\n<p>This app makes use of the official <a href="http://developer.spotify.com">Spotify Developer API</a> according to the Spotify Developer <a href="https://developer.spotify.com/terms/">Terms of Service.</a></p>\n<p>Additional licenses: <a href="https://material.io/">Material IO</a> and OkHttp library under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 license</a>.</p>]]></string>
+    <string name="prefs_notification_summary">Sendet eine Erinnerung jeden Sonntag Abend</string>
+    <string name="text_error_authenticate">Bitte zuerst bei Spotify anmelden</string>
+    <string name="prefs_notification_title">Erinnerung jeden Sonntag</string>
+    <string name="action_about">Über&#8230;</string>
+    <string name="button_openplaylist">Öffne Playlist</string>
+    <string name="text_error_msg">Fehler</string>
+    <string name="text_copyof">Kopie der Weekly</string>
+    <string name="text_error_no_internet">Please enable network connection</string>
+    <string name="text_info_authokay">Anmeldung bei Spotify erfolgreich</string>
+</resources>

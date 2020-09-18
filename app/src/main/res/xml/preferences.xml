@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:fragment="de.erichambuch.spotify.copyweekly.MyPreferencesActivity$MyPreferencesFragment"
+    >
+
+    <SwitchPreferenceCompat
+        app:key="notify_me"
+        app:title="@string/prefs_notification_title"
+        app:summary="@string/prefs_notification_summary"/>
+
+</PreferenceScreen>
