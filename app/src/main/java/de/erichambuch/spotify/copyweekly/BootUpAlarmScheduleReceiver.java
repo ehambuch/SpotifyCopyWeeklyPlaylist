@@ -24,7 +24,7 @@ public class BootUpAlarmScheduleReceiver extends BroadcastReceiver {
     private static final String CHANNEL_ID = "de.erichambuch.spotifyupdate";
     private static final int NOTIFICATION_ID = CHANNEL_ID.hashCode();
 
-    public class MyNotificationPublisher extends BroadcastReceiver {
+    public static class MyNotificationPublisher extends BroadcastReceiver {
 
         @Override
         public void onReceive(final Context context, Intent intent) {
