@@ -12,6 +12,7 @@
     <queries>
         <package android:name="com.spotify.music" />
         <package android:name="open.spotify.com" />
+        <package android:name="com.android.chrome" />
     </queries>
 
     <application
