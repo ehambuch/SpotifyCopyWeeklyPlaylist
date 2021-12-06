@@ -1,12 +1,16 @@
 package de.erichambuch.spotify.copyweekly;
 
+import static android.content.Context.CONNECTIVITY_SERVICE;
+
+import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.JobIntentService;
+import androidx.work.Worker;
+import androidx.work.WorkerParameters;
 
 import com.google.gson.Gson;
 
@@ -33,38 +37,46 @@ import okhttp3.Response;
 
 /**
  * Hintergrund-Service, der das Kopieren der Spotify Playlist übernimmt.
+ * TODO: Rückmeldung nicht mehr per Broadcast sondern Result
  */
-public class SpotifyPlaylistService extends JobIntentService {
+public class SpotifyPlaylistService extends Worker {
 
     /**
      * Fester Name der wöchentlichen Playlist.
      */
     private static final String WEEKLY_PLAY_LIST_NAME = "Discover Weekly";
 
+    public SpotifyPlaylistService(
+            @NonNull Context context,
+            @NonNull WorkerParameters params) {
+        super(context, params);
+    }
+
+    @NonNull
     @Override
-    protected void onHandleWork(@NonNull Intent intent) {
-        String token = intent.getStringExtra("access_token");
+    public Result doWork() {
+        String token = getInputData().getString("access_token");
         if (!checkInternet()) {
             showError(R.string.text_error_no_internet);
-            return;
+            return Result.failure();
         }
         sendStatus(R.string.status_start, 10);
         String user = getUser(token);
         if (user == null) {
             showError(R.string.text_error_kein_user);
-            return;
+            return Result.failure();
         }
         sendStatus(R.string.status_searchplaylist, 20);
         Playlist weeklyPlaylist = findWeeklyPlaylist(token);
         if (weeklyPlaylist == null) {
             showError(R.string.text_error_keine_weekly_playlist);
-            return;
+            return Result.failure();
         }
         sendStatus(R.string.status_gettracks, 40);
         List<Track> tracks = readTracks(weeklyPlaylist.tracks.href, token);
         if (tracks == null ) {
             showError(R.string.text_error_keine_tracks);
-            return;
+            return Result.failure();
         }
         Calendar playlistDate = GregorianCalendar.getInstance();
         playlistDate.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
@@ -72,23 +84,24 @@ public class SpotifyPlaylistService extends JobIntentService {
         if ( !tracks.isEmpty() && tracks.get(0).createdDate != null )
             date = tracks.get(0).createdDate;
         sendStatus(R.string.status_createplaylist, 60);
-        Playlist newPlaylist = createPlaylist(user, token, getString(R.string.text_copyof) + " " +
+        Playlist newPlaylist = createPlaylist(user, token, getApplicationContext().getString(R.string.text_copyof) + " " +
                 DateFormat.getDateInstance(DateFormat.SHORT).format(date));
         if (newPlaylist == null) {
             showError(R.string.text_error_no_create_playlist);
-            return;
+            return Result.failure();
         }
         sendStatus(R.string.status_copytracks, 70);
         boolean okay = overwriteTracks(newPlaylist.id, token, tracks);
         if(!okay) {
             showError(R.string.text_error_no_copy_tracks);
-            return;
+            return Result.failure();
         }
         sendStatus(R.string.status_finish, 100);
         // and send URI of new Playlist to Activity
         Intent finishIntent = new Intent(MainActivity.ACTION_PLAYLIST_FINISHED);
         finishIntent.putExtra("uri", newPlaylist.uri).putExtra("url", newPlaylist.external_urls.spotify);
-        sendBroadcast(finishIntent);
+        getApplicationContext().sendBroadcast(finishIntent);
+        return Result.success();
     }
 
     /**
@@ -243,24 +256,24 @@ public class SpotifyPlaylistService extends JobIntentService {
 
     private void showError(Exception e) {
         Log.e(AppInfo.APP_NAME, "Error in using Spotify API", e);
-        sendBroadcast(new Intent(MainActivity.ACTION_ERROR).
-                putExtra("text", getString(R.string.text_error_msg)+": "+e.getLocalizedMessage()));
+        getApplicationContext().sendBroadcast(new Intent(MainActivity.ACTION_ERROR).
+                putExtra("text", getApplicationContext().getString(R.string.text_error_msg)+": "+e.getLocalizedMessage()));
     }
 
     private void showError(int resId) {
-        sendBroadcast(new Intent(MainActivity.ACTION_ERROR).
-                putExtra("text", getResources().getString(resId)));
+        getApplicationContext().sendBroadcast(new Intent(MainActivity.ACTION_ERROR).
+                putExtra("text", getApplicationContext().getString(resId)));
     }
 
     private void sendStatus(int resId, int percent) {
-        sendBroadcast(new Intent(MainActivity.ACTION_UPDATE_PROGRESS).
-                putExtra("text", getString(resId)).
+        getApplicationContext().sendBroadcast(new Intent(MainActivity.ACTION_UPDATE_PROGRESS).
+                putExtra("text", getApplicationContext().getString(resId)).
                 putExtra("percent", percent));
     }
 
     private boolean checkInternet() {
         ConnectivityManager connMgr = (ConnectivityManager)
-                getSystemService(CONNECTIVITY_SERVICE);
+                getApplicationContext().getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         return (networkInfo != null && networkInfo.isConnected());
     }

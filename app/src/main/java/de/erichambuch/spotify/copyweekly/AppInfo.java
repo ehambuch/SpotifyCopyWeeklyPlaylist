@@ -10,6 +10,7 @@ package de.erichambuch.spotify.copyweekly;
  * v0.7 (7): fehlende Permission für Wake-Lock
  * v1.0 (8): Target Android 11
  * V1.1 (10): Updated Updated libs
+ * V1.2 (11): Update Android 12, Einsatz WorkManager neu
  * Idee: Liste mit Checkmarks für Fortschritt
  */
 public class AppInfo {

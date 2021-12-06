@@ -26,7 +26,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -49,14 +49,12 @@
 
         <receiver android:name=".BootUpAlarmScheduleReceiver"
             android:enabled="true"
-            android:exported="false"
+            android:exported="true"
             android:label="BootUpAlarmScheduleReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
-        <service android:name=".SpotifyPlaylistService" android:permission="android.permission.BIND_JOB_SERVICE"/>
     </application>
 
 </manifest>

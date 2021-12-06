@@ -21,8 +21,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.JobIntentService;
 import androidx.fragment.app.Fragment;
+import androidx.work.Constraints;
+import androidx.work.Data;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.spotify.sdk.android.auth.AuthorizationClient;
@@ -71,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
      * Vorsicht: bei App Bundes ist dies nicht der "upload" key, sondern der zum publishing. Dieser laesst sich
      * in der Google Developer Console einsehen unter App-Signatur.
      */
-    private static final String CLIENT_ID = "NWU2MWY1Mjk2M2Q4NDIzYzgzZjA2MmQ1NmRlOGM4MjcK";
+    //private static final String CLIENT_ID = "NWU2MWY1Mjk2M2Q4NDIzYzgzZjA2MmQ1NmRlOGM4MjcK";
 
     /**
      * Spotify Access Token.
@@ -124,18 +129,12 @@ public class MainActivity extends AppCompatActivity {
             super.onViewCreated(view, savedInstanceState);
 
             final Button fab = view.findViewById(R.id.button);
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    listener.startCopy(); // callback to Activity
-                }
+            fab.setOnClickListener(view1 -> {
+                listener.startCopy(); // callback to Activity
             });
             final Button open = view.findViewById(R.id.button_openplaylist);
-            open.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    listener.openPlaylist(); // callback to Activity
-                }
+            open.setOnClickListener(view12 -> {
+                listener.openPlaylist(); // callback to Activity
             });
         }
 
@@ -241,13 +240,20 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Starte die Kopieraktion der Playlist.
+     * Dazu nutzen wir anstatt JobScheduler nun den WorkManager.
      */
     void startCopy() {
         if (accessToken != null ) {
-            Intent intent = new Intent(MainActivity.this, SpotifyPlaylistService.class);
-            intent.putExtra("access_token", accessToken);
             // and start in background
-            JobIntentService.enqueueWork(MainActivity.this, SpotifyPlaylistService.class, 0, intent);
+            Data data = new Data.Builder().putString("access_token", accessToken).build();
+            WorkRequest uploadWorkRequest =
+                    new OneTimeWorkRequest.Builder(SpotifyPlaylistService.class)
+                            .setInputData(data).setConstraints(
+                                    new Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()).
+                            build();
+            WorkManager
+                    .getInstance(getApplicationContext())
+                    .enqueue(uploadWorkRequest);
         } else {
             ((TextView)findViewById(R.id.id_maintext)).setText(R.string.text_error_authenticate);
         }

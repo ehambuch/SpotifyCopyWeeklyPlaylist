@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
@@ -46,7 +47,7 @@ public class BootUpAlarmScheduleReceiver extends BroadcastReceiver {
                         .setAutoCancel(true)
                         .setSmallIcon(R.mipmap.ic_launcher);
                 final Intent callIntent = new Intent(context, MainActivity.class);
-                final PendingIntent activity = PendingIntent.getActivity(context, NOTIFICATION_ID, callIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+                final PendingIntent activity = PendingIntent.getActivity(context, NOTIFICATION_ID, callIntent, PendingIntent.FLAG_CANCEL_CURRENT  | PendingIntent.FLAG_IMMUTABLE);
                 builder.setContentIntent(activity);
                 final Notification notification = builder.build();
                 notificationManager.notify(NOTIFICATION_ID, notification);
@@ -66,8 +67,9 @@ public class BootUpAlarmScheduleReceiver extends BroadcastReceiver {
     static void registerNotificationAlarm(Context context) {
         if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(AppInfo.PREFS_NOTIFY_ME, false)) {
             Intent notificationIntent = new Intent(context, MyNotificationPublisher.class);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-
+            PendingIntent
+                pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT |
+                        (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S ? PendingIntent.FLAG_MUTABLE : 0));
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.HOUR_OF_DAY, 19);
             calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY); // Sonntags 19:00
@@ -75,7 +77,7 @@ public class BootUpAlarmScheduleReceiver extends BroadcastReceiver {
             if ( millis < System.currentTimeMillis() ) // is last week
                 millis += 7*24*3600*1000; // 7 days
             String date = DateFormat.getDateInstance().format(new Date(millis));
-
+            Log.i(AppInfo.APP_NAME, "Scheduled for "+date);
             // und alle 7 Tage...
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, millis, 7 * 24 * 3600 * 1000, pendingIntent);
