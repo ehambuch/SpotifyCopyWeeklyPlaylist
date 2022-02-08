@@ -11,6 +11,7 @@ package de.erichambuch.spotify.copyweekly;
  * v1.0 (8): Target Android 11
  * V1.1 (10): Updated Updated libs
  * V1.2 (11): Update Android 12, Einsatz WorkManager neu
+ * V1.3.0 (12): Update Libs, Anzeige OpenSource Libs, Hide Client API Key
  * Idee: Liste mit Checkmarks für Fortschritt
  */
 public class AppInfo {

@@ -32,4 +32,5 @@
     <string name="text_error_no_internet">Please enable network connection</string>
     <string name="text_info_authokay">Login to Spotify successful</string>
     <string name="text_spotify_logo" translatable="false">Spotify Logo</string>
+    <string name="action_osslicenses">OSS Licenses&#8230;</string>
 </resources>

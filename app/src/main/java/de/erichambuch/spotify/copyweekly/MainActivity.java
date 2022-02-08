@@ -9,6 +9,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,6 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -29,6 +31,7 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
 
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationRequest;
@@ -68,15 +71,6 @@ public class MainActivity extends AppCompatActivity {
     static final String ACTION_UPDATE_PROGRESS = "de.erichambuch.spotify.copyweekly.updateprogress";
     static final String ACTION_ERROR = "de.erichambuch.spotify.copyweekly.error";
     static final String ACTION_PLAYLIST_FINISHED = "de.erichambuch.spotify.copyweekly.playlistfinished";
-
-    /**
-     * Client ID aus https://developer.spotify.com/dashboard/applications/5e61f52963d8423c83f062d56de8c827.
-     * 5e61f52963d8423c83f062d56de8c827 als base64
-     * Außerdem muss der SHA1-Hash der App bei Spotify registriert werden.
-     * Vorsicht: bei App Bundes ist dies nicht der "upload" key, sondern der zum publishing. Dieser laesst sich
-     * in der Google Developer Console einsehen unter App-Signatur.
-     */
-    //private static final String CLIENT_ID = "NWU2MWY1Mjk2M2Q4NDIzYzgzZjA2MmQ1NmRlOGM4MjcK";
 
     /**
      * Spotify Access Token.
@@ -119,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
             if (context instanceof MainActivity) {
                 listener = (MainActivity) context;
             } else {
-                throw new ClassCastException(context.toString()
+                throw new ClassCastException(context
                         + " must implement MainActivity");
             }
         }
@@ -168,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
         if (networkInfo != null && networkInfo.isConnected()) {
             // Melde dich bei Spotify an
             final AuthorizationRequest request = new AuthorizationRequest.Builder(getClientId(), AuthorizationResponse.Type.TOKEN,
-                    "myapp-eric://de.erichambuch.spotify.copyweekly")
+                    "app://de.erichambuch.spotify.copyweekly")
                     .setScopes(new String[]{"user-read-private", "playlist-read", "playlist-read-private", "playlist-modify-private", "playlist-modify-public"})
                     .setShowDialog(false)
                     .build();
@@ -207,6 +201,9 @@ public class MainActivity extends AppCompatActivity {
             return true;
         } else if (id == R.id.action_about) {
             showAboutDialog();
+            return true;
+        } else if (id == R.id.action_showosslicenses) {
+            showOSSLicences();
             return true;
         }
 
@@ -283,12 +280,24 @@ public class MainActivity extends AppCompatActivity {
         builder.setTitle(R.string.app_name);
         builder.setMessage(Html.fromHtml(getString(R.string.text_license), Html.FROM_HTML_MODE_COMPACT));
         builder.setPositiveButton(android.R.string.ok, null);
-        builder.show();
-        //TextView view = (TextView)builder.findViewById(android.R.id.message);
-        //if (view != null ) view.setMovementMethod(LinkMovementMethod.getInstance()); // make links clickable
+        AlertDialog dialog = builder.show();
+        TextView view = (TextView)dialog.findViewById(android.R.id.message);
+        if (view != null ) view.setMovementMethod(LinkMovementMethod.getInstance()); // make links clickable
     }
 
+    private void showOSSLicences() {
+        startActivity(new Intent(this, OssLicensesMenuActivity.class));
+    }
+
+    /**
+     * Client ID aus https://developer.spotify.com/dashboard/applications/xxx.
+     * xxx als base64
+     * Außerdem muss der SHA1-Hash der App bei Spotify registriert werden.
+     * Vorsicht: bei App Bundes ist dies nicht der "upload" key, sondern der zum publishing. Dieser laesst sich
+     * in der Google Developer Console einsehen unter App-Signatur.
+     * @return clientId
+     */
     private String getClientId() {
-        return "5e61f52963d8423c83f062d56de8c827"; // TODO: new String(Base64.decode(CLIENT_ID, Base64.DEFAULT));
+        return BuildConfig.SPOTIFY_CLIENT_ID; // compiled by build.gradle into BuildConfig
     }
 }

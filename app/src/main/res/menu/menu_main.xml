@@ -6,7 +6,7 @@
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_about"
         android:orderInCategory="200"
@@ -17,5 +17,9 @@
         android:orderInCategory="300"
         android:title="@string/action_dataprotection"
         app:showAsAction="never" />
-
+    <item
+        android:id="@+id/action_showosslicenses"
+        android:orderInCategory="400"
+        android:title="@string/action_osslicenses"
+        app:showAsAction="never" />
 </menu>
