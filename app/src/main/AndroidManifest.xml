@@ -13,6 +13,7 @@
         <package android:name="com.spotify.music" />
         <package android:name="open.spotify.com" />
         <package android:name="com.android.chrome" />
+        <package android:name="api.spotify.com"/>
     </queries>
 
     <application

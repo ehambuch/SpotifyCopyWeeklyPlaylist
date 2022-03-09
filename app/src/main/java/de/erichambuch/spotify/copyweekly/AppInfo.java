@@ -12,6 +12,7 @@ package de.erichambuch.spotify.copyweekly;
  * V1.1 (10): Updated Updated libs
  * V1.2 (11): Update Android 12, Einsatz WorkManager neu
  * V1.3.0 (12): Update Libs, Anzeige OpenSource Libs, Hide Client API Key
+ * V1.4.0 (13): Update for Fehler bei Anmeldung Spotify (Web Flow alternativ)
  * Idee: Liste mit Checkmarks für Fortschritt
  */
 public class AppInfo {
@@ -20,6 +21,8 @@ public class AppInfo {
      * Preferences: Notification on/off.
      */
     public static final String PREFS_NOTIFY_ME = "notify_me";
+
+    public static final String PREFS_AUTHENTICATE = "authenticate_me";
 
     public static final String APP_NAME = "CopyWeeklyPlaylistForSpotify";
 }

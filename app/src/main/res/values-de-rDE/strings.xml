@@ -29,4 +29,6 @@
     <string name="text_error_no_internet">Please enable network connection</string>
     <string name="text_info_authokay">Anmeldung bei Spotify erfolgreich</string>
     <string name="action_osslicenses">OSS Lizenzen&#8230;</string>
+    <string name="prefs_authentication_title">Spotify App Anmeldung</string>
+    <string name="prefs_authentication_summary">Nutze deine Anmeldung in der Spotify App oder alternativ ein Web-Formular</string>
 </resources>

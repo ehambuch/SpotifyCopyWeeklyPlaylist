@@ -24,6 +24,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 import androidx.work.Constraints;
 import androidx.work.Data;
 import androidx.work.NetworkType;
@@ -36,6 +37,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationRequest;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -155,22 +159,46 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        // Check internet
-        ConnectivityManager connMgr = (ConnectivityManager)
-                getSystemService(CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) {
-            // Melde dich bei Spotify an
-            final AuthorizationRequest request = new AuthorizationRequest.Builder(getClientId(), AuthorizationResponse.Type.TOKEN,
-                    "app://de.erichambuch.spotify.copyweekly")
-                    .setScopes(new String[]{"user-read-private", "playlist-read", "playlist-read-private", "playlist-modify-private", "playlist-modify-public"})
-                    .setShowDialog(false)
-                    .build();
-
-            AuthorizationClient.openLoginActivity(this, REQUEST_SPOTIFY_AUTH_CODE, request);
-        } else {
-            ((TextView)findViewById(R.id.id_maintext)).setText(R.string.text_error_no_internet);
+        final String action = getIntent().getAction();
+        if(Intent.ACTION_MAIN.equals(action)) {
+            // Check internet
+            ConnectivityManager connMgr = (ConnectivityManager)
+                    getSystemService(CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            if (networkInfo != null && networkInfo.isConnected()) {
+                // Melde dich bei Spotify an
+                boolean authenticateApp = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(AppInfo.PREFS_AUTHENTICATE, true);
+                final AuthorizationRequest request = new AuthorizationRequest.Builder(getClientId(), AuthorizationResponse.Type.TOKEN,
+                        "app://de.erichambuch.spotify.copyweekly")
+                        .setScopes(new String[]{"user-read-private", "playlist-read", "playlist-read-private", "playlist-modify-private", "playlist-modify-public"})
+                        .setShowDialog(false)
+                        .build();
+                if (authenticateApp)
+                    AuthorizationClient.openLoginActivity(this, REQUEST_SPOTIFY_AUTH_CODE, request);
+                else
+                    AuthorizationClient.openLoginInBrowser(this, request);
+            } else {
+                ((TextView) findViewById(R.id.id_maintext)).setText(R.string.text_error_no_internet);
+            }
+        } else if( Intent.ACTION_VIEW.equals(action)) { // for Web Authentication Flow
+            Uri uri = getIntent().getData();
+            final String fragment = uri.getFragment() != null ? uri.getFragment() : "";
+            accessToken = splitQuery(fragment).get("access_token");
+            if(accessToken != null)
+                ((TextView)findViewById(R.id.id_maintext)).setText(R.string.text_info_authokay);
+            else
+                ((TextView)findViewById(R.id.id_maintext)).setText(R.string.text_error_authenticate);
         }
+    }
+
+    public static Map<String, String> splitQuery(String query) {
+        Map<String, String> query_pairs = new LinkedHashMap<>();
+        String[] pairs = query.split("&");
+        for (String pair : pairs) {
+            int idx = pair.indexOf("=");
+            query_pairs.put(pair.substring(0, idx), pair.substring(idx + 1));
+        }
+        return query_pairs;
     }
 
     @Override
@@ -191,6 +219,9 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
+            // clear caches - this may help
+            AuthorizationClient.clearCookies(this);
+
             startActivity(new Intent(this, MyPreferencesActivity.class));
             return true;
         }

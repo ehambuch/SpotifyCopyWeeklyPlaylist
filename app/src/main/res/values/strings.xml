@@ -33,4 +33,6 @@
     <string name="text_info_authokay">Login to Spotify successful</string>
     <string name="text_spotify_logo" translatable="false">Spotify Logo</string>
     <string name="action_osslicenses">OSS Licenses&#8230;</string>
+    <string name="prefs_authentication_title">Use Spotify App Authentication</string>
+    <string name="prefs_authentication_summary">Either use the Authentication of your installed Spotify App or switch back to a web-based logon form</string>
 </resources>

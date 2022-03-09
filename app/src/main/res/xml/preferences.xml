@@ -5,6 +5,12 @@
     >
 
     <SwitchPreferenceCompat
+        app:key="authenticate_me"
+        app:title="@string/prefs_authentication_title"
+        app:summary="@string/prefs_authentication_summary"
+        app:defaultValue="true"/>
+
+    <SwitchPreferenceCompat
         app:key="notify_me"
         app:title="@string/prefs_notification_title"
         app:summary="@string/prefs_notification_summary"/>

@@ -111,12 +111,13 @@ public class SpotifyPlaylistService extends Worker {
      * @return user name or null
      */
     private String getUser(String accessToken) {
+        Response response = null;
         try {
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder().get().url("https://api.spotify.com/v1/me").
                     addHeader("Authorization", "Bearer "+accessToken).
                     build();
-            Response response = client.newCall(request).execute();
+            response = client.newCall(request).execute();
             if (!response.isSuccessful())
                 return null;
             User user = new Gson().fromJson(response.body().string(), User.class);
@@ -124,6 +125,13 @@ public class SpotifyPlaylistService extends Worker {
         } catch(IOException e) {
             showError(e);
             return null;
+        } finally {
+            try {
+                if (response != null)
+                    response.close();
+            } catch(Exception e) {
+                // ignore
+            }
         }
     }
 
@@ -135,6 +143,7 @@ public class SpotifyPlaylistService extends Worker {
      * @return playlist or null
      */
     private Playlist findWeeklyPlaylist(String accessToken) {
+        Response response = null;
         try {
             OkHttpClient client = new OkHttpClient();
             PlaylistPaging paging = new PlaylistPaging();
@@ -142,7 +151,7 @@ public class SpotifyPlaylistService extends Worker {
             paging.next = "https://api.spotify.com/v1/me/playlists?limit=50";
             do {
                 Request request = new Request.Builder().get().url(paging.next).addHeader("Authorization", "Bearer "+accessToken).build();
-                Response response = client.newCall(request).execute();
+                response = client.newCall(request).execute();
                 if (!response.isSuccessful())
                     return null;
                 paging = new Gson().fromJson(response.body().string(), PlaylistPaging.class);
@@ -160,6 +169,13 @@ public class SpotifyPlaylistService extends Worker {
         } catch(IOException e) {
             showError(e);
             return null;
+        } finally {
+            try {
+                if (response != null)
+                    response.close();
+            } catch(Exception e) {
+                // ignore
+            }
         }
     }
 
@@ -170,15 +186,16 @@ public class SpotifyPlaylistService extends Worker {
      * @return List of tracks or null
      */
     private List<Track> readTracks(String url, String accessToken) {
+        Response response = null;
         try {
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder().get().url(url+"?market=from_token").  //&fields=id,href,uri"
                     addHeader("Authorization", "Bearer "+accessToken).
                     build();
-            Response response = client.newCall(request).execute();
+            response = client.newCall(request).execute();
             if (!response.isSuccessful())
                 return null;
-            String rep =response.body().string();
+            String rep = response.body().string();
             TrackPaging paging = new Gson().fromJson(rep, TrackPaging.class);
             if (paging != null && paging.items != null ) {
                 ArrayList<Track> list = new ArrayList<>(paging.items.length);
@@ -197,6 +214,13 @@ public class SpotifyPlaylistService extends Worker {
         } catch(IOException e) {
             showError(e);
             return null;
+        } finally {
+            try {
+                if (response != null)
+                    response.close();
+            } catch(Exception e) {
+                // ignore
+            }
         }
     }
 
@@ -208,8 +232,9 @@ public class SpotifyPlaylistService extends Worker {
      * @return true if succcessful
      */
     private boolean overwriteTracks(String playlistId, String accessToken, List<Track> tracks) {
+        OkHttpClient client = new OkHttpClient();
+        Response response = null;
         try {
-            OkHttpClient client = new OkHttpClient();
             List<String> trackURIs = new ArrayList<>(tracks.size());
             for(Track track : tracks) {
                if(track.uri != null)
@@ -219,11 +244,18 @@ public class SpotifyPlaylistService extends Worker {
             Request request = new Request.Builder().put(body).url("https://api.spotify.com/v1/playlists/"+playlistId+"/tracks").
                     addHeader("Authorization", "Bearer "+accessToken).
                     build();
-            Response response = client.newCall(request).execute();
+            response = client.newCall(request).execute();
             return response.isSuccessful();
         } catch(IOException e) {
             showError(e);
             return false;
+        } finally {
+           try {
+               if (response != null)
+                   response.close();
+           } catch(Exception e) {
+            // ignore
+           }
         }
     }
 
@@ -235,6 +267,7 @@ public class SpotifyPlaylistService extends Worker {
      * @return the new playlist or null
      */
     private Playlist createPlaylist(String user, String accessToken, String name) {
+        Response response = null;
         try {
             OkHttpClient client = new OkHttpClient();
             Playlist playlist = new Playlist();
@@ -244,13 +277,20 @@ public class SpotifyPlaylistService extends Worker {
             Request request = new Request.Builder().post(body).url("https://api.spotify.com/v1/users/"+user+"/playlists").
                     addHeader("Authorization", "Bearer "+accessToken).
                     build();
-            Response response = client.newCall(request).execute();
+            response = client.newCall(request).execute();
             if (!response.isSuccessful())
                 return null;
             return new Gson().fromJson(response.body().string(), Playlist.class);
         } catch(IOException e) {
             showError(e);
             return null;
+        } finally {
+            try {
+                if (response != null)
+                    response.close();
+            } catch(Exception e) {
+                // ignore
+            }
         }
     }
 
