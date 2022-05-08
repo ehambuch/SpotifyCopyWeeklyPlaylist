@@ -160,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         final String action = getIntent().getAction();
+
         if(Intent.ACTION_MAIN.equals(action)) {
             // Check internet
             ConnectivityManager connMgr = (ConnectivityManager)
@@ -183,8 +184,8 @@ public class MainActivity extends AppCompatActivity {
         } else if( Intent.ACTION_VIEW.equals(action)) { // for Web Authentication Flow
             Uri uri = getIntent().getData();
             final String fragment = uri.getFragment() != null ? uri.getFragment() : "";
-            accessToken = splitQuery(fragment).get("access_token");
-            if(accessToken != null)
+            setAccessToken(splitQuery(fragment).get("access_token"));
+            if(getAccessToken() != null)
                 ((TextView)findViewById(R.id.id_maintext)).setText(R.string.text_info_authokay);
             else
                 ((TextView)findViewById(R.id.id_maintext)).setText(R.string.text_error_authenticate);
@@ -251,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
                 // Response was successful and contains auth token
                 case TOKEN:
                     // Handle successful response
-                    accessToken = response.getAccessToken();
+                    setAccessToken(response.getAccessToken());
                     ((TextView)findViewById(R.id.id_maintext)).setText(R.string.text_info_authokay);
                     break;
                 // Auth flow returned an error
@@ -262,6 +263,7 @@ public class MainActivity extends AppCompatActivity {
                 // Most likely auth flow was cancelled
                 default:
                     // Handle other cases
+                    ((TextView)findViewById(R.id.id_maintext)).setText(response.getError()+": "+response.getType());
             }
         }
     }
@@ -271,9 +273,9 @@ public class MainActivity extends AppCompatActivity {
      * Dazu nutzen wir anstatt JobScheduler nun den WorkManager.
      */
     void startCopy() {
-        if (accessToken != null ) {
+        if (getAccessToken() != null ) {
             // and start in background
-            Data data = new Data.Builder().putString("access_token", accessToken).build();
+            Data data = new Data.Builder().putString("access_token", getAccessToken()).build();
             WorkRequest uploadWorkRequest =
                     new OneTimeWorkRequest.Builder(SpotifyPlaylistService.class)
                             .setInputData(data).setConstraints(
@@ -330,5 +332,13 @@ public class MainActivity extends AppCompatActivity {
      */
     private String getClientId() {
         return BuildConfig.SPOTIFY_CLIENT_ID; // compiled by build.gradle into BuildConfig
+    }
+
+    private synchronized void setAccessToken(String token) {
+        this.accessToken = token;
+    }
+
+    private synchronized String getAccessToken() {
+        return accessToken;
     }
 }

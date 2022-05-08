@@ -10,9 +10,10 @@ package de.erichambuch.spotify.copyweekly;
  * v0.7 (7): fehlende Permission für Wake-Lock
  * v1.0 (8): Target Android 11
  * V1.1 (10): Updated Updated libs
- * V1.2 (11): Update Android 12, Einsatz WorkManager neu
+ * V1.2 (11): Update Android 12, Einsatz WorkManager neu5
  * V1.3.0 (12): Update Libs, Anzeige OpenSource Libs, Hide Client API Key
  * V1.4.0 (13): Update for Fehler bei Anmeldung Spotify (Web Flow alternativ)
+ * V1.5.0 (14): Bugfix for Login problems
  * Idee: Liste mit Checkmarks für Fortschritt
  */
 public class AppInfo {
