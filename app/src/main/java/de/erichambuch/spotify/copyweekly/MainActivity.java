@@ -220,9 +220,6 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            // clear caches - this may help
-            AuthorizationClient.clearCookies(this);
-
             startActivity(new Intent(this, MyPreferencesActivity.class));
             return true;
         }

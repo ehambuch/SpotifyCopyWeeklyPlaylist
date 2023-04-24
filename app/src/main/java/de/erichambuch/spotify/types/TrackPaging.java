@@ -1,10 +1,8 @@
 package de.erichambuch.spotify.types;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
-import java.util.Locale;
 
 /**
  * Wrapper for JSON object of Spotify API.
@@ -21,12 +19,7 @@ public class TrackPaging {
         public Date getAddedAt() throws ParseException {
             if (added_at == null)
                 return null;
-            if ( android.os.Build.VERSION.SDK_INT < 26 ) {
-                SimpleDateFormat inFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US); // ISO 8601
-                return inFormat.parse(added_at);
-            } else {
-                return Date.from(Instant.parse(added_at));
-            }
+            return Date.from(Instant.parse(added_at));
         }
     }
 

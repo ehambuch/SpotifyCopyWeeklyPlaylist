@@ -8,7 +8,6 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.util.Log;
 
 import androidx.preference.PreferenceManager;
@@ -33,14 +32,10 @@ public class BootUpAlarmScheduleReceiver extends BroadcastReceiver {
                 final NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
                 Notification.Builder builder;
                 // Notication Channel ab Android 8
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    NotificationChannel channel = new NotificationChannel(CHANNEL_ID, context.getString(R.string.app_name), NotificationManager.IMPORTANCE_DEFAULT);
-                    channel.setDescription(context.getString(R.string.app_name));
-                    notificationManager.createNotificationChannel(channel);
-                    builder = new Notification.Builder(context, CHANNEL_ID);
-                } else {
-                    builder = new Notification.Builder(context);
-                }
+                NotificationChannel channel = new NotificationChannel(CHANNEL_ID, context.getString(R.string.app_name), NotificationManager.IMPORTANCE_DEFAULT);
+                channel.setDescription(context.getString(R.string.app_name));
+                notificationManager.createNotificationChannel(channel);
+                builder = new Notification.Builder(context, CHANNEL_ID);
                 builder
                         .setContentTitle(context.getString(R.string.notification_title))
                         .setContentText(context.getString(R.string.notification_text))

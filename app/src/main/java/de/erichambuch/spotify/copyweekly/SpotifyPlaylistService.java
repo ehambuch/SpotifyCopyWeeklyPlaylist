@@ -315,6 +315,6 @@ public class SpotifyPlaylistService extends Worker {
         ConnectivityManager connMgr = (ConnectivityManager)
                 getApplicationContext().getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        return (networkInfo != null && networkInfo.isConnected());
+        return (networkInfo != null && networkInfo.getState() == NetworkInfo.State.CONNECTED);
     }
 }
