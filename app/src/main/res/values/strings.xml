@@ -8,6 +8,7 @@
     <string name="button_label">Copy playlist</string>
     <string name="status_start">Fetching user data&#8230;</string>
     <string name="status_searchplaylist">Searching playlist \"Weekly\"&#8230;</string>
+    <string name="status_searchplaylist_continue">Continue searching playlist \"Weekly\"&#8230; #%s</string>
     <string name="status_gettracks">Reading tracks&#8230;</string>
     <string name="status_createplaylist">Creating new playlist&#8230;</string>
     <string name="status_copytracks">Copying tracks&#8230;</string>
@@ -35,4 +36,5 @@
     <string name="action_osslicenses">OSS Licenses&#8230;</string>
     <string name="prefs_authentication_title">Use Spotify App Authentication</string>
     <string name="prefs_authentication_summary">Either use the Authentication of your installed Spotify App or switch back to a web-based logon form</string>
+    <string name="button_login">Login</string>
 </resources>

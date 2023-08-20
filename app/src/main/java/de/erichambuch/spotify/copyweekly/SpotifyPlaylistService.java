@@ -5,7 +5,7 @@ import static android.content.Context.CONNECTIVITY_SERVICE;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.net.NetworkCapabilities;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -149,6 +149,7 @@ public class SpotifyPlaylistService extends Worker {
             PlaylistPaging paging = new PlaylistPaging();
             // erste Seite
             paging.next = "https://api.spotify.com/v1/me/playlists?limit=50";
+            int pageNo = 1;
             do {
                 Request request = new Request.Builder().get().url(paging.next).addHeader("Authorization", "Bearer "+accessToken).build();
                 response = client.newCall(request).execute();
@@ -163,6 +164,9 @@ public class SpotifyPlaylistService extends Worker {
                         }
                     }
                 }
+                sendStatus(String.format(getApplicationContext().getString(R.string.status_searchplaylist_continue),
+                                Integer.toString(pageNo++)),
+                        20+pageNo);
             } while(paging != null && paging.next != null); // nächste Seiten holen
             return null; // not found
 
@@ -311,10 +315,17 @@ public class SpotifyPlaylistService extends Worker {
                 putExtra("percent", percent));
     }
 
+    private void sendStatus(String text, int percent) {
+        getApplicationContext().sendBroadcast(new Intent(MainActivity.ACTION_UPDATE_PROGRESS).
+                putExtra("text", text).
+                putExtra("percent", percent));
+    }
+
     private boolean checkInternet() {
         ConnectivityManager connMgr = (ConnectivityManager)
                 getApplicationContext().getSystemService(CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        return (networkInfo != null && networkInfo.getState() == NetworkInfo.State.CONNECTED);
+        NetworkCapabilities networkInfo = connMgr.getNetworkCapabilities(connMgr.getActiveNetwork());
+        return (networkInfo != null && networkInfo.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                && networkInfo.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED));
     }
 }

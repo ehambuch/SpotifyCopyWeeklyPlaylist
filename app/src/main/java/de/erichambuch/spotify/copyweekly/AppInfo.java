@@ -14,7 +14,7 @@ package de.erichambuch.spotify.copyweekly;
  * V1.3.0 (12): Update Libs, Anzeige OpenSource Libs, Hide Client API Key
  * V1.4.0 (13): Update for Fehler bei Anmeldung Spotify (Web Flow alternativ)
  * V1.5.0 (14): Bugfix for Login problems
- * V1.6.0 (16): Update SDK 33
+ * V1.6.0 (16/17): Update SDK und Login-Button
  * Idee: Liste mit Checkmarks für Fortschritt
  */
 public class AppInfo {

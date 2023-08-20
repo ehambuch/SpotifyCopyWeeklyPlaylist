@@ -13,7 +13,7 @@ android {
         applicationId "de.erichambuch.spotify.copyweekly"
         minSdkVersion 26
         targetSdkVersion 33
-        versionCode 16
+        versionCode 17
         versionName '1.6.0'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "SPOTIFY_CLIENT_ID", localProperties['SPOTIFY_CLIENT_ID'])
@@ -48,7 +48,7 @@ dependencies {
     implementation "androidx.work:work-runtime:2.8.1"
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    implementation 'com.spotify.android:auth:2.0.2'
+    implementation 'com.spotify.android:auth:2.1.0'
     implementation 'com.squareup.okhttp3:okhttp:4.11.0'
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'androidx.preference:preference:1.2.1'

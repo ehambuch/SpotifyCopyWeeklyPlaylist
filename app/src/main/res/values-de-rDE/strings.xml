@@ -9,6 +9,7 @@
     <string name="status_copytracks">Kopiere die Tracks&#8230;</string>
     <string name="status_createplaylist">Erzeuge neue Playlist&#8230;</string>
     <string name="status_finish">Fertig - Weekly kopiert.</string>
+    <string name="status_searchplaylist_continue">Suche weiter: Playlist \"Weekly\"&#8230; #%s</string>
     <string name="status_gettracks">Lese Tracks&#8230;</string>
     <string name="status_searchplaylist">Suche Playlist \"Weekly\"&#8230;</string>
     <string name="status_start">Hole Benutzerdaten&#8230;</string>
@@ -31,4 +32,5 @@
     <string name="action_osslicenses">OSS Lizenzen&#8230;</string>
     <string name="prefs_authentication_title">Spotify App Anmeldung</string>
     <string name="prefs_authentication_summary">Nutze deine Anmeldung in der Spotify App oder alternativ ein Web-Formular</string>
+    <string name="button_login">Anmelden</string>
 </resources>

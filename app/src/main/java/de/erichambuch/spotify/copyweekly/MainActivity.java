@@ -5,8 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
+import android.net.NetworkRequest;
+import android.net.NetworkSpecifier;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -126,6 +130,11 @@ public class MainActivity extends AppCompatActivity {
         public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
 
+            final Button fabLog = view.findViewById(R.id.loginbutton);
+            fabLog.setOnClickListener(view1 -> {
+                listener.startLogin(); // callback to Activity
+            });
+
             final Button fab = view.findViewById(R.id.button);
             fab.setOnClickListener(view1 -> {
                 listener.startCopy(); // callback to Activity
@@ -137,6 +146,30 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    private void startLogin() {
+        // Check internet
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(CONNECTIVITY_SERVICE);
+        NetworkCapabilities networkInfo = connMgr.getNetworkCapabilities(connMgr.getActiveNetwork());
+        if (networkInfo != null && networkInfo.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            && networkInfo.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) {
+            // Melde dich bei Spotify an
+            boolean authenticateApp = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(AppInfo.PREFS_AUTHENTICATE, true);
+            final AuthorizationRequest request = new AuthorizationRequest.Builder(getClientId(), AuthorizationResponse.Type.TOKEN,
+                    "app://de.erichambuch.spotify.copyweekly")
+                    .setScopes(new String[]{"user-read-private", "playlist-read", "playlist-read-private", "playlist-modify-private", "playlist-modify-public"})
+                    .setShowDialog(false)
+                    .build();
+            if (authenticateApp)
+                AuthorizationClient.openLoginActivity(this, REQUEST_SPOTIFY_AUTH_CODE, request);
+            else
+                AuthorizationClient.openLoginInBrowser(this, request);
+        } else {
+            ((TextView) findViewById(R.id.id_maintext)).setText(R.string.text_error_no_internet);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,7 +183,12 @@ public class MainActivity extends AppCompatActivity {
         broadCastIntentFilter.addAction(ACTION_ERROR);
         broadCastIntentFilter.addAction(ACTION_PLAYLIST_FINISHED);
         broadCastIntentFilter.addAction(ACTION_UPDATE_PROGRESS);
-        registerReceiver(thisReceiver, broadCastIntentFilter);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(thisReceiver, broadCastIntentFilter, RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(thisReceiver, broadCastIntentFilter);
+        }
 
         // und Alarm registrieren
         BootUpAlarmScheduleReceiver.registerNotificationAlarm(this);
@@ -161,27 +199,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         final String action = getIntent().getAction();
 
-        if(Intent.ACTION_MAIN.equals(action)) {
-            // Check internet
-            ConnectivityManager connMgr = (ConnectivityManager)
-                    getSystemService(CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-            if (networkInfo != null && networkInfo.isConnected()) {
-                // Melde dich bei Spotify an
-                boolean authenticateApp = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(AppInfo.PREFS_AUTHENTICATE, true);
-                final AuthorizationRequest request = new AuthorizationRequest.Builder(getClientId(), AuthorizationResponse.Type.TOKEN,
-                        "app://de.erichambuch.spotify.copyweekly")
-                        .setScopes(new String[]{"user-read-private", "playlist-read", "playlist-read-private", "playlist-modify-private", "playlist-modify-public"})
-                        .setShowDialog(false)
-                        .build();
-                if (authenticateApp)
-                    AuthorizationClient.openLoginActivity(this, REQUEST_SPOTIFY_AUTH_CODE, request);
-                else
-                    AuthorizationClient.openLoginInBrowser(this, request);
-            } else {
-                ((TextView) findViewById(R.id.id_maintext)).setText(R.string.text_error_no_internet);
-            }
-        } else if( Intent.ACTION_VIEW.equals(action)) { // for Web Authentication Flow
+        if( Intent.ACTION_VIEW.equals(action)) { // for Web Authentication Flow Callback
             Uri uri = getIntent().getData();
             final String fragment = uri.getFragment() != null ? uri.getFragment() : "";
             setAccessToken(splitQuery(fragment).get("access_token"));
@@ -190,6 +208,9 @@ public class MainActivity extends AppCompatActivity {
             else
                 ((TextView)findViewById(R.id.id_maintext)).setText(R.string.text_error_authenticate);
         }
+
+        // only enable copy of login successful
+        findViewById(R.id.button).setEnabled((accessToken != null));
     }
 
     public static Map<String, String> splitQuery(String query) {
@@ -251,11 +272,13 @@ public class MainActivity extends AppCompatActivity {
                     // Handle successful response
                     setAccessToken(response.getAccessToken());
                     ((TextView)findViewById(R.id.id_maintext)).setText(R.string.text_info_authokay);
+                    findViewById(R.id.button).setEnabled(true);
                     break;
                 // Auth flow returned an error
                 case ERROR:
                     // Handle error response
-                    ((TextView)findViewById(R.id.id_maintext)).setText(response.getError());
+                    ((TextView)findViewById(R.id.id_maintext)).setText(response.getError()+": "+response.getType());
+                    findViewById(R.id.button).setEnabled(false);
                     break;
                 // Most likely auth flow was cancelled
                 default:
