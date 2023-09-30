@@ -19,11 +19,11 @@
     <string name="text_error_no_copy_tracks">Fehler: Kann Tracks nicht kopieren!</string>
     <string name="text_error_no_create_playlist">Fehler: Kann neue Playlist nicht anlegen!</string>
     <string name="action_dataprotection">Datenschutz</string>
-    <string name="text_license" translatable="true"><![CDATA[<p>Written in 2020 by Eric Hambuch</p>\n<p>This app makes use of the official <a href="http://developer.spotify.com">Spotify Developer API</a> according to the Spotify Developer <a href="https://developer.spotify.com/terms/">Terms of Service.</a></p>\n<p>Additional licenses: <a href="https://material.io/">Material IO</a> and OkHttp library under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 license</a>.</p>]]></string>
+    <string name="text_license" translatable="true"><![CDATA[<p>Written in 2020 by Eric Hambuch</p>\n<p>This app makes use of the official <a href="http://developer.spotify.com">Spotify Developer API</a> according to the Spotify Developer <a href="https://developer.spotify.com/terms/">Terms of Service.</a></p>\n<p>Additional licenses: <a href="https://material.io/">Material IO</a> and OkHttp library under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 license</a>.</p><br/><p>Feedback is welcome by email to <a href="mailto:erichambuch+apps@googlemail.com">erichambuch+apps@googlemail.com</a>. <a href="app://de.erichambuch.spotify.kontakt">Impressum</a></p>]]></string>
     <string name="prefs_notification_summary">Sendet eine Erinnerung jeden Sonntag Abend</string>
     <string name="text_error_authenticate">Bitte zuerst bei Spotify anmelden</string>
     <string name="prefs_notification_title">Erinnerung jeden Sonntag</string>
-    <string name="action_about">Über&#8230;</string>
+    <string name="action_about">Kontakt/Über&#8230;</string>
     <string name="button_openplaylist">Öffne Playlist</string>
     <string name="text_error_msg">Fehler</string>
     <string name="text_copyof">Kopie der Weekly</string>
@@ -33,4 +33,5 @@
     <string name="prefs_authentication_title">Spotify App Anmeldung</string>
     <string name="prefs_authentication_summary">Nutze deine Anmeldung in der Spotify App oder alternativ ein Web-Formular</string>
     <string name="button_login">Anmelden</string>
+    <string name="cancel">Zurück</string>
 </resources>

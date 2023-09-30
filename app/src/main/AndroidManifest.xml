@@ -50,7 +50,17 @@
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
             android:theme="@style/AppTheme" android:exported="false" />
-
+        <activity android:name=".ContactActivity" android:exported="true" android:parentActivityName=".MainActivity" android:autoRemoveFromRecents="true"
+            android:excludeFromRecents="true" android:allowEmbedded="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="app"
+                    android:host="de.erichambuch.spotify.kontakt"/>
+            </intent-filter>
+        </activity>
         <receiver android:name=".BootUpAlarmScheduleReceiver"
             android:enabled="true"
             android:exported="true"
